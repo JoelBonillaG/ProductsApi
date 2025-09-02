@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProductsApi.DTOs;
 using ProductsApi.Models;
 
 namespace ProductsApi.Controllers
 {
-    [Route("api/controller")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
@@ -38,6 +39,28 @@ namespace ProductsApi.Controllers
             }
             return Ok(product);
         }
+
+        [HttpPost]
+        public ActionResult<Product> CreateProduct([FromBody] CreateProductDto dto)
+        {
+            if (dto is null) return BadRequest("El cuerpo de la solicitud no puede estar vacío.");
+            if (string.IsNullOrWhiteSpace(dto.Name)) return BadRequest("El nombre del producto es obligatorio.");
+            if (dto.Price < 0) return BadRequest("El precio del producto no puede ser negativo.");
+
+            var nextId = products.Count == 0 ? 1 : products.Max(p => p.Id) + 1;
+            var newProduct = new Product
+            {
+                Id = nextId,
+                Name = dto.Name,
+                Price = dto.Price,
+                IsAvailable = dto.IsAvailable
+            };
+
+            products.Add(newProduct);
+            return CreatedAtAction(nameof(GetProduct), new { id = newProduct.Id }, newProduct);
+        }
+
+
 
         [HttpPut("{id}")]
         public IActionResult UpdateProduct(int id, Product product)
