@@ -49,6 +49,20 @@ namespace ProductsApi.Controllers
             return NoContent();
         }
 
+        [HttpPut("{id}")]
+        public IActionResult UpdateProduct(int id, Product product)
+        {
+            var existingProduct = products.FirstOrDefault(p => p.Id == id);
+            if (existingProduct == null)
+            {
+                return NotFound();
+            }
 
+            existingProduct.Name = product.Name;
+            existingProduct.Price = product.Price;
+            existingProduct.IsAvailable = product.IsAvailable;
+
+            return NoContent();
+        }
     }
 }
