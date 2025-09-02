@@ -1,14 +1,36 @@
+# Exercise Requirements
+
+## 1. Data Model
+
+The `Product` data model contains the following properties:
+
+- **Id**: Unique identifier of the product.  
+- **Name**: Name of the product.  
+- **Price**: Price of the product.  
+- **Available**: Availability indicator of the product.  
+
+```csharp
+public class Product
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+    public bool Available { get; set; }
+}
+```
+
 ## 2. Endpoints
 
-The API supports the following *endpoints* to interact with the products:
+The API supports the following *endpoints* to interact with products:
 
-- GET /api/Products: Lists all the products available in the catalog.
-- GET /api/Products/{id}: Gets a product by its ID.
-- POST /api/Products: Creates a new product in the system.
-- PUT /api/Products/{id}: Updates an existing product by its ID.
-- DELETE /api/Products/{id}: Deletes a product from the catalog.
+- **GET** `/api/Products`: Lists all products available in the catalog.  
+- **GET** `/api/Products/{id}`: Retrieves a product by its ID.  
+- **POST** `/api/Products`: Creates a new product in the system.  
+- **PUT** `/api/Products/{id}`: Updates an existing product by its ID.  
+- **DELETE** `/api/Products/{id}`: Deletes a product from the catalog.  
 
-These endpoints allow managing the complete lifecycle of the products in the system.
+These endpoints allow managing the complete lifecycle of products in the system.  
+For more details and interactive testing, please visit the **Swagger UI** included in the project.
 
 ## 3. Technologies
 
