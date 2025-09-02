@@ -28,4 +28,7 @@ Once the dependencies are restored, run the application locally with the followi
 dotnet run
 ```
 
-The API will be available at [http://localhost:5000](http://localhost:7143).
+The API will be available at both:
+
+- HTTPS: [https://localhost:7143](https://localhost:7143)  
+- HTTP: [http://localhost:5069](http://localhost:5069)
