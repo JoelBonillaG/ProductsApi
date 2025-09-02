@@ -4,6 +4,8 @@ using ProductsApi.Models;
 
 namespace ProductsApi.Controllers
 {
+    [Route("api/controller")]
+    [ApiController]
     public class ProductsController : ControllerBase
     {
         private static List<Product> products = new List<Product>
@@ -37,18 +39,6 @@ namespace ProductsApi.Controllers
             return Ok(product);
         }
 
-        [HttpDelete]
-        public IActionResult DeleteProduct(int id)
-        {
-            var product = products.FirstOrDefault(p => p.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            products.Remove(product);
-            return NoContent();
-        }
-
         [HttpPut("{id}")]
         public IActionResult UpdateProduct(int id, Product product)
         {
@@ -64,5 +54,18 @@ namespace ProductsApi.Controllers
 
             return NoContent();
         }
+
+        [HttpDelete]
+        public IActionResult DeleteProduct(int id)
+        {
+            var product = products.FirstOrDefault(p => p.Id == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            products.Remove(product);
+            return NoContent();
+        }
+
     }
 }
