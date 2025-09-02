@@ -37,5 +37,18 @@ namespace ProductsApi.Controllers
             return Ok(product);
         }
 
+        [HttpDelete]
+        public IActionResult DeleteProduct(int id)
+        {
+            var product = products.FirstOrDefault(p => p.Id == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            products.Remove(product);
+            return NoContent();
+        }
+
+
     }
 }
