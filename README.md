@@ -1,4 +1,24 @@
+## 2. Endpoints
 
+The API supports the following *endpoints* to interact with the products:
+
+- GET /api/Products: Lists all the products available in the catalog.
+- GET /api/Products/{id}: Gets a product by its ID.
+- POST /api/Products: Creates a new product in the system.
+- PUT /api/Products/{id}: Updates an existing product by its ID.
+- DELETE /api/Products/{id}: Deletes a product from the catalog.
+
+These endpoints allow managing the complete lifecycle of the products in the system.
+
+## 3. Technologies
+
+The project uses the following technologies:
+
+- ASP.NET Core Web API: Framework for creating and managing the REST API.
+  
+- Swagger: Integrated tool that allows testing and documenting the API endpoints in an easy way.
+
+- In-memory list: To simplify development and implementation, the API uses an in-memory list to temporarily store the products.
 
 ## 4. Repository Usage Guide
 
