@@ -1,11 +1,26 @@
+using dotenv.net;
+using Microsoft.EntityFrameworkCore;
+
+using ProductsApi.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// load .env file variables into the environment variables
+DotEnv.Load();
 
+var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION"); // get the connection string from the environment variables
+
+// Registrar DbContext para EF Core
+builder.Services.AddDbContext<ProductsDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
+
+// Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 
 var app = builder.Build();
 
@@ -17,9 +32,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

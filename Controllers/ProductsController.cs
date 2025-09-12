@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProductsApi.Data;
 using ProductsApi.DTOs;
 using ProductsApi.Models;
 
@@ -9,86 +10,88 @@ namespace ProductsApi.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private static List<Product> products = new List<Product>
+        private readonly ProductsDbContext _context;
+
+        public ProductsController(ProductsDbContext context)
         {
-        new Product { Id = 1, Name = "Samsung Galaxy S23", Price = 799.99m, IsAvailable = true },
-        new Product { Id = 2, Name = "Sony WH-1000XM5 Headphones", Price = 348.00m, IsAvailable = true },
-        new Product { Id = 3, Name = "Dell XPS 13 Laptop", Price = 999.99m, IsAvailable = false },
-        new Product { Id = 4, Name = "Apple MacBook Pro 16-inch", Price = 2499.99m, IsAvailable = true },
-        new Product { Id = 5, Name = "Fitbit Charge 5", Price = 149.95m, IsAvailable = true },
-        new Product { Id = 6, Name = "Nintendo Switch OLED", Price = 349.99m, IsAvailable = true },
-        new Product { Id = 7, Name = "GoPro HERO11 Black", Price = 499.99m, IsAvailable = false },
-        new Product { Id = 8, Name = "Sony PlayStation 5 Console", Price = 499.99m, IsAvailable = true },
-        new Product { Id = 9, Name = "Apple AirPods Pro 2nd Generation", Price = 249.99m, IsAvailable = true },
-        new Product { Id = 10, Name = "Canon EOS Rebel T8i DSLR Camera", Price = 849.99m, IsAvailable = true }
-        };
+            _context = context;
+        }
+
+        // GET: api/products
         [HttpGet]
         public ActionResult<IEnumerable<Product>> GetProducts()
         {
+            var products = _context.Products.ToList();
             return Ok(products);
         }
 
-
+        // GET: api/products/{id}
         [HttpGet("{id}")]
-        public ActionResult<Product> GetProduct(int id)
+        public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = products.FirstOrDefault(p => p.Id == id);
+            var product = await _context.Products.FindAsync(id);
+
             if (product == null)
-            {
                 return NotFound();
-            }
+
             return Ok(product);
         }
 
+        // POST: api/products
         [HttpPost]
-        public ActionResult<Product> CreateProduct([FromBody] CreateProductDto dto)
+        public async Task<ActionResult<Product>> CreateProduct([FromBody] CreateProductDto dto)
         {
             if (dto is null) return BadRequest("El cuerpo de la solicitud no puede estar vacío.");
             if (string.IsNullOrWhiteSpace(dto.Name)) return BadRequest("El nombre del producto es obligatorio.");
             if (dto.Price < 0) return BadRequest("El precio del producto no puede ser negativo.");
 
-            var nextId = products.Count == 0 ? 1 : products.Max(p => p.Id) + 1;
             var newProduct = new Product
             {
-                Id = nextId,
                 Name = dto.Name,
                 Price = dto.Price,
                 IsAvailable = dto.IsAvailable
             };
 
-            products.Add(newProduct);
+            _context.Products.Add(newProduct);
+            await _context.SaveChangesAsync();
+
             return CreatedAtAction(nameof(GetProduct), new { id = newProduct.Id }, newProduct);
         }
 
-
-
+        // PUT: api/products/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdateProduct(int id, Product product)
+        public async Task<IActionResult> UpdateProduct(int id, [FromBody] Product product)
         {
-            var existingProduct = products.FirstOrDefault(p => p.Id == id);
+            if (product is null) return BadRequest("El cuerpo de la solicitud no puede estar vacío.");
+            if (string.IsNullOrWhiteSpace(product.Name)) return BadRequest("El nombre del producto es obligatorio.");
+            if (product.Price < 0) return BadRequest("El precio del producto no puede ser negativo.");
+
+            var existingProduct = await _context.Products.FindAsync(id);
             if (existingProduct == null)
-            {
                 return NotFound();
-            }
 
             existingProduct.Name = product.Name;
             existingProduct.Price = product.Price;
             existingProduct.IsAvailable = product.IsAvailable;
 
+            _context.Products.Update(existingProduct);
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
 
-        [HttpDelete]
-        public IActionResult DeleteProduct(int id)
+        // DELETE: api/products/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
         {
-            var product = products.FirstOrDefault(p => p.Id == id);
+            var product = await _context.Products.FindAsync(id);
             if (product == null)
-            {
                 return NotFound();
-            }
-            products.Remove(product);
+
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
-
     }
 }
